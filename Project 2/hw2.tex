@@ -1,0 +1,207 @@
+\documentclass[a4paper,12pt]{article}
+
+ 
+\usepackage{graphicx} 
+\usepackage{listings}
+\usepackage{indentfirst}
+\usepackage{subcaption}
+\usepackage[skip=2pt,font=scriptsize]{caption}
+
+\lstset{ 
+	language=Matlab,                		% choose the language of the code
+%	basicstyle=10pt,       				% the size of the fonts that are used for the code
+	numbers=left,                  			% where to put the line-numbers
+	numberstyle=\footnotesize,      		% the size of the fonts that are used for the line-numbers
+	stepnumber=1,                   			% the step between two line-numbers. If it's 1 each line will be numbered
+	numbersep=5pt,                  		% how far the line-numbers are from the code
+%	backgroundcolor=\color{white},  	% choose the background color. You must add \usepackage{color}
+	showspaces=false,               		% show spaces adding particular underscores
+	showstringspaces=false,         		% underline spaces within strings
+	showtabs=false,                 			% show tabs within strings adding particular underscores
+%	frame=single,	                			% adds a frame around the code
+%	tabsize=2,                				% sets default tabsize to 2 spaces
+%	captionpos=b,                   			% sets the caption-position to bottom
+	breaklines=true,                			% sets automatic line breaking
+	breakatwhitespace=false,        		% sets if automatic breaks should only happen at whitespace
+	escapeinside={\%*}{*)}          		% if you want to add a comment within your code
+}	
+\begin{document}
+\title{Application of Gabor Transform in Audio Data}
+\author{Htet Aung Myin}
+\maketitle
+\begin{abstract}
+The application of the Gabor Transform on three different audio files is described. Differences from different wavelet formulas were observed, along with effects of varying window width, oversampling, and undersampling in spectrograms. The Gabor transform is also applied to observe overtones and derive a musical score for an audio file and identify the timbre of the instrument.
+\end{abstract}
+\newpage
+\section{Introduction and Overview}
+The problem given is regarding three audio files. Audio files are presented as a wave with time and amplitude information. By using the Fourier Transform, the audio data can be moved into the frequency domain and Gabor filters can be applied to the data. The first audio file, Handel's Messiah, is analyzed using the Gabor transform to discover different wavelet formulas, window with, and sampling through spectrograms. In the following two audio files, the Gabor transform is then used to write a musical score with their corresponding frequencies and analyze the timbre of two different instruments.
+
+ 
+\section{Theoretical Background}
+
+\subsection{Fast Fourier Transform}
+A Fast Fourier Transform(FFT) is an algorithm that computes the Discrete Fourier Transform (DFT) of a sequence. The Fourier Transforms converts a signal from the spatial domain into a frequency domain, or vice versa but gives no time data.
+The DFT is defined by the formula:
+$$
+X_{k}=\sum_{n=0}^{N-1} x_{n} e^{-2 \pi i k n / N} \quad k=0, \ldots, N-1
+$$
+while the inverse Fourier Transform (iFFT) defined by:
+$$
+X_{n}=\frac{1}{N} \sum_{k=0}^{N-1} x_{k} e^{2 \pi i k n / N} \quad k=0, \ldots, N-1
+$$
+with $N = 2^n$
+In comparison, the FFT runs at $O(N log N)$ while the DFT runs
+at $O(N^2)$
+
+\subsection{Gabor Transform and Wavelets}
+The Gabor transform is a windowed Fourier transform that gives both time and frequency properties of a  signal. It is also known as the short-time Fourier transform(STFT) and is defined by
+$$
+G[f](t, \omega)=\bar{f}_{g}(t, \omega)=\int_{-\infty}^{\infty} f(\tau) \bar{g}(\tau-t) e^{-i \omega \tau} d \tau=\left(f, \bar{g}_{t, \omega}\right)
+$$
+
+The bar describes the complex conjugate of the function and $g(\tau - t)$ is the filter.
+
+Examples of simple Gabor filters are the Gaussian time-filter, the Mexican-Hat wavelet, and the Shannon filter.
+
+The Gaussian time-filter is described as
+$$
+F(t)= e^{-\alpha(t-t_{0})}
+$$
+where $\alpha$ describes the width of the window.
+\newline
+\indent The Mexican Hat Wavelets is described because it is shape and is defined as
+$$
+\psi (t) = (1-(t-t_{0})^2) * e^{\alpha  (t-t_{0})} $$
+\smallskip
+\indent The Shannon filter is simply a step function that returns 1 in a given width or 0 otherwise.
+\newline
+
+Note: There are other windowed Fourier transforms other than the Gabor Transform.
+
+\subsection{Spectrograms}
+A spectrogram is a visualization tool that can describe a signal in both the time and frequency domain.
+
+
+\section{Algorithm Implementation and Development}
+Given data points in audio files, Handel's Messiah and two recordings of Mary Had A Little Lamb, the initial analysis is fairly similar for all three recordings.
+\begin{enumerate}
+\item The data is first read in (Handel's Messiah is part of MATLAB while audio wav files were provided for the two recordings of Mary Had A Little Lamb).
+
+\item External details of the data were extracted such as the length of the file and number of data points. A range of frequency values is also set up. As FFT assumes $2\pi$ periodic signal, the frequency values are scaled by $2\pi / L$
+\item A suitable time translation and width is determined and for each time translation, the Gabor filter is applied and the FFT of the filtered data is applied across time. Note: Due to computational constraints, the time translation may not be ideal.
+\item The output is then displayed in an spectrogram.
+\end{enumerate}
+\subsection{Handel's Messiah}
+The goal of this section is to discover the consequences of window width, under sampling, over sampling, and different filters.
+In lines 1-10, the audio file is loaded in and the signal is plotted. Lines 18-19 describes the external details of the audio file while lines 27-44 displays four spectrograms with varying window widths. Line 79-92 tweak around with over sampling and under sampling. Line 94-119 describes a Mexican Hat Wavelet and compares it with a Gaussian filter.
+\subsection{Mary Had A Little Lamb}
+The goal of this section is to write a musical score for each respective instruments and analyze the difference in time frequency analysis.
+Lines 124-138, 195-198 reads in data and extract given data from the audio file. Lines 134-174, 216-244 describes a spectrogram as it translates across time. Lines 182-191 and lines 248-253 describes notes as frequencies and marks it on the histogram.
+
+\section{Computational Results}
+
+\subsection{Results: Handel's Messiah}
+The MATLAB built in audio file Handel's Messiah is approximately 9 second longs with 73113 points of data. From the spectrograms, we can conclude that the smaller the width(larger $\alpha$) the clearer the resolution as shown in Figure 1 in contrast to Figure 2. In Figure 3 and 4, it can be concluded that using too large a time translation can result in unclear time resolution while small time translational can be inefficient computationally.
+
+\begin{figure}[!h]
+	\centering
+	\begin{minipage}[t]{3.5cm}
+		\centering
+		\includegraphics[scale=0.3]{a1000.png}
+		\caption{Gaussian Filter with Window Width a = 1000}
+	\end{minipage}
+	\hspace{0.2cm}
+	\begin{minipage}[t]{3cm}
+		\centering
+		\includegraphics[scale=0.3]{a1.png}
+		\caption{Gaussian Filter with Window Width a = 1}
+	\end{minipage}
+	\begin{minipage}[t]{3cm}
+		\centering
+		\includegraphics[scale=0.3]{undersamp.png}
+		\caption{Undersampling in Gaussian Filter (a=1)}
+	\end{minipage}
+	\hspace{0.2 cm}
+	\begin{minipage}[t]{3cm}
+		\centering
+		\includegraphics[scale=0.3]{oversamp.png}
+		\caption{Oversampling in Gaussian Filter (a=1)}
+	\end{minipage}
+	
+\end{figure}
+\begin{figure}[!h]
+	\centering
+	\begin{minipage}[t]{4cm}
+		\centering
+		\includegraphics[scale=0.5]{a1000.png}
+		\caption{Gaussian Filter with Window Width a = 1000}
+	\end{minipage}
+	\hspace{2cm}
+	\begin{minipage}[t]{4cm}
+		\centering
+		\includegraphics[scale=0.5]{mexico.png}
+		\caption{Mexican Hat Filter with Window Width a = 1000}
+	\end{minipage}
+
+\end{figure}
+From the spectrograms, it can be concluded that different filter functions provide different sets of data as seen in Figure 5 and 6
+\subsection{Results: Mary Had A Little Lamb}
+With the gabor transform applied to both samples of Mary Had A Little Lamb, a high translation window was picked to give a cursory view of the center frequency. Once the frequency was determined, a smaller translation window is picked. The figures displayed are the best possible window given hardware constraints.
+\begin{figure}[!h]
+	
+	\begin{minipage}[t]{7 cm}
+		\centering
+		\includegraphics[scale=0.25]{cursorypiano.png}
+		\caption{A Large Translation Window Over All Ranges for Piano}
+	\end{minipage}
+	\hspace{1cm}
+	\begin{minipage}[t]{7 cm}
+		\centering
+		\includegraphics[scale=0.25]{cursory.png}
+		\caption{A Large Translation Window Over All Ranges for Piano}
+	\end{minipage}
+\end{figure}
+\begin{figure}
+	
+	\begin{minipage}[t]{7cm}
+		\centering
+		\includegraphics[scale=0.36]{.25piano.png}
+		\caption{A Large Translation Window Over All Ranges for Piano}
+	\end{minipage}
+	\hspace{1cm}
+	\begin{minipage}[t]{7cm}
+		\centering
+		\includegraphics[scale=0.36]{.2recorder.png}
+		\caption{A Large Translation Window Over All Ranges for Piano}
+	\end{minipage}
+\end{figure}
+\newpage
+As observed from Figure 7 and 8, there are different concentrated frequencies, with 200-400 Hz for the piano and 700 - 1000 Hz for the recorder. Both displayed overtones with the piano being even throughout the frequencies while the overtones in recorder are intense in higher frequencies. These difference in intensities creates the timbre of the instrument. 
+\newline
+Frequencies are then converted into a music score. By common musical knowledge, Mary Had A Little Lamb does not contain the sharps so only the base notes were indicated.
+\newline The final score derived from the spectogram for the piano is \newline$E4-D4-C4-D4-E4-E4-E4-D4-D4-D4-E4-E4-E4-E4-D4-C4-D4-E4-E4-E4-D4-D4-E4-D4-C4$
+\newline 
+
+The final score derived from the spectogram for the recorder is \newline
+$B4-A4-G4-A4-B4-B4-B4-A4-A4-A4-B4-B4-B4-B4-A4-G4-A4-B4-B4-B4-A4-A4-B4-A4-G4$
+\section{Summary \& Conclusion }
+The first audio file, Handel's Messiah was analyzed for the behavior of the Gabor filter after changing its window width, time translation, and sample. Oversampling leads to memory problems for the computer and undersampling causes poor time data. 
+\newline
+\indent The other two audio files, Mary Had A Little Lamb, were analyzed by finding their central frequencies before converting frequencies into musical scores. The recorder is observed to have higher frequencies than the piano.
+\section{Appendix A. }
+\begin{itemize}
+  \item audioread : read in data from wav audio files
+  \item fft: used to fourier transform data into frequency domain
+  \item fftshift: shift frequency to plottable data
+  \item pcolor: plots spectrogram
+  \item colormap: changes color of spectrogram
+\end{itemize}
+\newpage
+\section{Appendix B.}
+\lstinputlisting[language=Matlab]{HW2.m}
+
+
+
+
+
+\end{document}
