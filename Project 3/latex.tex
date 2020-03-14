@@ -1,0 +1,143 @@
+\documentclass[a4paper,12pt]{article}
+
+ 
+\usepackage{graphicx} 
+\usepackage{listings}
+\usepackage{indentfirst}
+\usepackage{subcaption}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amsfonts}
+\usepackage[skip=2pt,font=scriptsize]{caption}
+
+\lstset{ 
+	language=Matlab,                		% choose the language of the code
+%	basicstyle=10pt,       				% the size of the fonts that are used for the code
+	numbers=left,                  			% where to put the line-numbers
+	numberstyle=\footnotesize,      		% the size of the fonts that are used for the line-numbers
+	stepnumber=1,                   			% the step between two line-numbers. If it's 1 each line will be numbered
+	numbersep=5pt,                  		% how far the line-numbers are from the code
+%	backgroundcolor=\color{white},  	% choose the background color. You must add \usepackage{color}
+	showspaces=false,               		% show spaces adding particular underscores
+	showstringspaces=false,         		% underline spaces within strings
+	showtabs=false,                 			% show tabs within strings adding particular underscores
+%	frame=single,	                			% adds a frame around the code
+%	tabsize=2,                				% sets default tabsize to 2 spaces
+%	captionpos=b,                   			% sets the caption-position to bottom
+	breaklines=true,                			% sets automatic line breaking
+	breakatwhitespace=false,        		% sets if automatic breaks should only happen at whitespace
+	escapeinside={\%*}{*)}          		% if you want to add a comment within your code
+}	
+\begin{document}
+\title{Principal Component Analysis on Video Data}
+\author{Htet Aung Myin}
+\maketitle
+\begin{abstract}
+The application of the Principal Component Analysis on different videos of a mass-spring system is performed. A white flash on the hanging mass acts as a tracker for data preparation. Four experiments are performed with three different camera angles for each of them. They include; an ideal test, a noisy test, a horizontally displaced test, and a rotational and horizontally displaced test.
+\end{abstract}
+\newpage
+\section{Introduction and Overview}
+The problem given is regarding four tests situations with three camera angles for each situation. In the first test, a mass is moving normally in an oscillatory behavior. The second test introduced camera shake (noise) to the normally oscillating mass. In the third test, the mass is released off center to produce an horizontal displacement. The fourth test introduced a rotational as well as horizontal displacement to the mass. In each experiment, data would be over sampled. As there are three camera angles per experiment, there would be 6 variables corresponding to the X and Y axis of each camera, forming a 6 x N matrix, where N would be the number of frames.
+ 
+\section{Theoretical Background}
+
+\subsection{Singular Value Decomposition}
+The Singular Value Decomposition transforms a matrix A into: 
+	\begin{align*}
+\mathbf { A } = \mathbf { U } \boldsymbol { \Sigma } \mathbf { V } ^ { * } \text{ where} \\
+\begin{array} { l } { \mathbf { U } \in \mathbb { C } ^ { m \times m } \text { is unitary } } \\ { \mathbf { V } \in \mathbb { C } ^ { n \times n } \text { is unitary } } \\ { \boldsymbol { \Sigma } \in \mathbb { R } ^ { m \times n } \text { is diagonal } } \end{array}
+	\end{align*}
+	The SVD can be computed by the following
+\begin{align*}
+\mathbf { A } ^ { T } \mathbf { A } & = \left( \mathbf { U } \boldsymbol { \Sigma } \mathbf { V } ^ { * } \right) ^ { T } \left( \mathbf { U } \boldsymbol { \Sigma } \mathbf { V } ^ { * } \right) \\ & = \mathbf { V } \boldsymbol { \Sigma } \mathbf { U } ^ { * } \mathbf { U } \boldsymbol { \Sigma } \mathbf { V } ^ { * } \\ & = \mathbf { V } \boldsymbol { \Sigma } ^ { 2 } \mathbf { V } ^ { * }  \\ \\
+\mathbf { A } \mathbf { A } ^ { T } & = \left( \mathbf { U } \boldsymbol { \Sigma } \mathbf { V } ^ { * } \right) \left( \mathbf { U } \boldsymbol { \Sigma } \mathbf { V } ^ { * } \right) ^ { T } \\ & = \mathbf { U \Sigma V } ^ { * } \mathbf { V } \boldsymbol { \Sigma } \mathbf { U } ^ { * } \\ & = \mathbf { U } \boldsymbol { \Sigma } ^ { 2 } \mathbf { U } ^ { * } \\ \\
+\mathbf { A } ^ { T } \mathbf { A V } & = \mathbf { V } \Sigma ^ { 2 } \\ \mathbf { A } \mathbf { A } ^ { T } \mathbf { U } & = \mathbf { U } \boldsymbol { \Sigma } ^ { 2 }
+\end{align*}
+\subsection{Principal Component Analysis}
+	One of the primary applications of the SVD is for Principal Component Analysis (PCA)where it reduces the dimensions of the data set.  The data can be placed a matrix with $X \in \mathbb { R } ^ { m \times n }$, where $m$ is number of measurements and $n$ is number of data points taken over time. In this matrix, redundancy can be identified and reduced with the covariance matrix and is defined by: 
+ 
+$C_Y = \frac { 1 } { n - 1 } \mathbf { Y } \mathbf { Y } ^ { T }$
+
+
+
+
+
+
+
+
+\section{Algorithm Implementation and Development}
+The dataset consisted of x-y coordinates of the bucket over time. The procedure was similar for all four cases. 
+\begin{enumerate}
+\item The file(s) are loaded in and the number of frames were found using the size command.
+\item A filter function is then defined for each individual cases based on human estimations of where the mass could possible be. This narrows down the frame to where the mass is acting on the system. There may have been issues due to this.
+\item Over each frame, the colors are gray scaled as the tracking of the white flash would be more covinenet.
+\item A threshold is defined for each test case (threshold varies with test as some tests had too much motion.
+\item The indices were found using the find command. Each coordinates were averaged and then added into a data array of size 2 x frame number. 
+\item This process is the repeated over each video for each experiment, giving three matrices.
+\item As each video have different numbers of frames, the video with the shortest frame is identified. The other videos are then trimmed and added it to one large 6 x Frame Number matrix. 
+\item The mean of each row is subtracted from the data to allow the data be on the same scale, and the SVD of the transpose data matrix is taken.
+\item The diagonal of S is taken to find the variance and plotted the variance as a function of principal components to see which were most significant.
+\item The Principal Component is also plotted.
+\end{enumerate}
+
+\section{Computational Results}
+
+
+In the first test, a very high energy could be observed for the first principal component. This is ideal as the mass was only moving in one direction. \newline \indent
+In the second test, despite the noise, similar to the first test, there could possibly be one principal component as it is still moving in one direction. However, noise may cause issues. \newline\indent 
+In the third test, A large variance can be observed for 3-4 principal components which could describe the motion of the mass. This is possibly caused by motion in both directions.
+\newline
+\indent In the fourth test, A large variance can be observed for 3-4 principal components. This is possibly caused by motion in both directions along with rotational motion.
+\begin{figure}[!h]
+	
+	\begin{minipage}[t]{7 cm}
+		\centering
+		\includegraphics[scale=0.4]{ideal displacmeent.png}
+		\caption{Test 1: Ideal Case}
+	\end{minipage}
+	\hspace{1cm}
+	\begin{minipage}[t]{7 cm}
+		\centering
+		\includegraphics[scale=0.5]{noisy displacement.png}
+		\caption{Test 2: Noisy Case}
+	\end{minipage}
+\end{figure}
+\begin{figure}
+	
+	\begin{minipage}[t]{7cm}
+		\centering
+		\includegraphics[scale=0.5]{horiz displacment.png}
+		\caption{Test 3: Horizontal Displacement}
+	\end{minipage}
+	\hspace{1cm}
+	\begin{minipage}[t]{7cm}
+		\centering
+		\includegraphics[scale=0.5]{hoirzrota.png}
+		\caption{Test 4: Horizontal Displacement and rotation}
+	\end{minipage}
+\end{figure}
+\newpage
+
+\section{Summary \& Conclusion }
+PCA was successfully performed on each of the four tests as the oscillation was tracked.The principal components are accurate to a certain extent, however, the filter may have over sampling issues due to human error. In test 1 and 2, even with noise, the motion was extracted fairly well. In test 3 and 4, with 
+
+\section{Appendix A. }
+\begin{itemize}
+  \item diag(X) = returns diagonal value of matrix X
+  \item find(X) = returns a vector of index in a matrix
+	\item  zeros() = fills a matrix with zeros
+	\item svd() = returns a diagonal matrix S along with unitary matrix U and V
+	\item rgb2gray(X) : given an image X, grayscales it
+	\item size(X) : returns dimension of matrix X
+	\item length(X) : returns length of matrix X
+  
+\end{itemize}
+\newpage
+\section{Appendix B.}
+\lstinputlisting[language=Matlab]{hw3.m}
+
+
+
+
+
+\end{document}
