@@ -1,0 +1,154 @@
+\documentclass[a4paper,12pt]{article}
+
+ 
+\usepackage{graphicx} 
+\usepackage{listings}
+\usepackage{indentfirst}
+\usepackage{subcaption}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amsfonts}
+\usepackage[skip=2pt,font=scriptsize]{caption}
+
+
+\begin{document}
+\title{Neural Networks for Classifying Fashion MNIST}
+\author{Htet Aung Myin}
+\maketitle
+\begin{abstract}
+The application of neural networks and convolutional neural network is applied to build a classifier for a data set called Fashion-MNIST, native from the TensorFlow Library.
+\end{abstract}
+\newpage
+\section{Introduction and Overview}
+Similar to the the popular MNIST data set, which consisted of handwritten datasets, the Fashion-MNIST dataset contains images of 10 different classes of fashion items. The dataset, consisting of several thousand images are split into training and testing data sets where each set contains a list of images and their associated labels. The labels are as follows:
+\begin{itemize}
+\item 0 T-shirt/top
+\item 1 Trouser
+\item 2 Pullover
+\item 3 Dress
+\item 4 Coat
+\item 5 Sandal
+\item 6 Shirt
+\item 7 Sneaker
+\item 8 Bag
+\item 9 Ankle boot
+  
+\end{itemize}
+\section{Theoretical Background}
+
+\subsection{Neural Network}
+A neural network, also called an artificial neural network, is based on a collection of nodes called artificial neurons which are loosely modeled after a biological brain. A neural network is a combination of many layers where a linear combination is performed between the previous layer's output and the current layer's weight before passing the data to the next layer through and activation function.
+\begin{figure}[h]
+	
+
+		\centering
+		\includegraphics[scale=0.3]{YwCCU.png}
+		\caption{Test 1/3: Layer of a Neural Network}
+	
+
+\end{figure}
+
+\subsection{Convolutional Neural Networks }
+	A Convolutional Neural Network(CNN) is a type of neural network that is mainly used to analyze visual imagery. One of the defining aspects of it is that it has one or more layers of convolution units. The layers of a CNN consists of an input layer, an output layer, and a hidden layer that includes multiple convolution layers, pooling layers, fully connected layers and normalization layers.
+ 
+
+
+
+
+
+
+
+
+\section{Algorithm Implementation and Development}
+The data set consisting of 10 different classes of fashion items are loaded from TensorFlow. 
+\begin{enumerate}
+\item The dataset is then split into training and test data.
+\item The training data is then split into training and validation data and also normalized and converted to float from uint8.
+\item A model is constructed with varying number of layers and density. The best result is selected through trial and error.
+\item The model is fitted to the training data and accuracy of the training and validation data is determined. If the training data is higher than the validation data, the model is adjusted.
+\item The accuracy and loss is plotted and a confusion matrix is displayed. 
+\item This process is repeated with a convolutional neural network with the addition of a convolutional layer where the hyper-parameters are adjusted based on trial and error.
+
+\end{enumerate}
+
+
+\section{Computational Results}
+\subsection{Fully Connected Neural Network}
+The Fully Connected Neural Network ran over 40 epochs, with the best validation accuracy at 86.36\% and training accuracy at 86.31\% at the 27th epoch. At a greater epoch, there are signs of over fitting as the training accuracy is larger than the validation accuracy. A training accuracy greater than 90\% was possible but there would be severe over fitting issues.
+
+The Fully Connected Neural Network had the most trouble identifying Shirt(0) and T-Shirts(6) in both the prediction and test data as seen in figure 4 and 5.
+\subsection{Convolutional Neural Network}
+The CNN ran for 10 epochs due to time and memory constraints as many convolution layers were defined. The model best performed at its 7th epoch where the validation accuracy was at 90.02 \% and the training accuracy was at 90.47\%. Any greater epochs showed signs of overfitting.
+
+Similarly, the CNN had the most trouble identifying Shirt(0) and T-Shirts(6) in both the prediction and test data as seen in figure 6 and 7.
+ 
+\begin{figure}[h]
+	
+	\begin{minipage}[t]{6 cm}
+		\centering
+		\textbf{Accuracy and Loss of Fully Connected NN} 
+		\includegraphics[scale=0.4]{ann.png}
+		\caption{Fully Connected Neural Network }
+	\end{minipage}
+	\hspace{2cm}
+	\begin{minipage}[t]{6 cm}
+		\centering
+		\textbf{Accuracy and Loss of Convoluted NN} 
+		\includegraphics[scale=0.4]{cnn.png}
+		\caption{Convolutional Neural Network}
+	\end{minipage}
+\end{figure}
+\begin{figure}[h]
+	
+	\begin{minipage}[t]{7cm}
+		\centering
+		\includegraphics[scale=0.5]{confannpred.png}
+		\caption{Confusion Matrix for Fully Connected NN (Training)}
+	\end{minipage}
+	\hspace{1cm}
+	\begin{minipage}[t]{7cm}
+		\centering
+		\includegraphics[scale=0.5]{confanntest.png}
+		\caption{Confusion Matrix for Fully Connected NN (Test)}
+	\end{minipage}
+\end{figure}
+\begin{figure}[!h]
+	
+	\begin{minipage}[t]{7cm}
+		\centering
+		\includegraphics[scale=0.5]{confcnnpred.png}
+		\caption{Confusion Matrix for CNN (Training)}
+	\end{minipage}
+	\hspace{1cm}
+	\begin{minipage}[t]{7cm}
+		\centering
+		\includegraphics[scale=0.5]{confcnntrain.png}
+		\caption{Confusion Matrix for CNN (Test)}
+	\end{minipage}
+\end{figure}
+
+
+
+
+\newpage
+\section{Summary \& Conclusion}
+
+A fully connected neural network and a convolutional neural network was built to classify categories from the Fashion-MNIST dataset. The CNN performed slightly better compared to the fully connected neural network but in time performance, the fully connected neural network performed better. Both networks had issues in identifying a shirt or a t-shirt, possibly due to similarities.
+
+\section{Appendix A. }
+\begin{itemize}
+\item tf.keras.datasets = a public API for datasets
+\item functool.partial = returns a new partial object when called and behaves like a func with arguments
+\item tf.keras.layers.Sequential = a linear stack of layers
+\item tf.keras.layers.Dense = a regular densly connected NN layer
+\item tf.keras.layers.Conv2D = a 2D convolution layer
+\end{itemize}
+\newpage
+\section{Appendix B.}
+\lstinputlisting[language=Python]{hw5.py}
+
+
+
+
+
+\end{document}
