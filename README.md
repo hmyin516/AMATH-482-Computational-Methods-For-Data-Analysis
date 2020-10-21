@@ -8,5 +8,4 @@ Exploratory and objective data analysis methods applied to the physical, enginee
 Project 1: Application of Fast Fourier Transform in Ultrasound Data <br/>
 Project 2: Application of Gabor Transform in Audio Files<br/>
 Project 3: Pricipal Component Analysis on Video Data<br/>
-Project 4: Linear Discriminat Analysis on Music Classification (Code not working)<br/>
-Project 5: Neural Networks for Classifying Fashion MNIST with TensorFlow<br/>
+Project 4: Neural Networks for Classifying Fashion MNIST with TensorFlow<br/>
